@@ -24,7 +24,9 @@ public class UsuarioDaoImp implements UsuarioDao {
     @Override
     @Transactional
     public List<Usuario> getUsuarios() {
-        return entityManager.createQuery("from Usuario").getResultList();
+        return entityManager.createQuery("from Usuario",Usuario.class).getResultList();
+        //Tambien se puede asi
+        //return entityManager.createQuery("from Usuario",Usuario.class).getResultList();
     }
 
     @Override
@@ -43,7 +45,6 @@ public class UsuarioDaoImp implements UsuarioDao {
     @Override
     @Transactional
     public void deleteUsuario(Integer id) {
-        // TODO Auto-generated method stub
 
         Usuario usuario= entityManager.find(Usuario.class, id);
 

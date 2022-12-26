@@ -1,9 +1,13 @@
 package com.example.ceiba_prueba.controllers;
 
+import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -38,13 +42,19 @@ public class UsuarioController {
     }
 
     @RequestMapping(value = "usuario/register", method = RequestMethod.POST)
-    public Usuario registrar(@RequestBody Usuario usuario) {
+    public ResponseEntity<Object> registrar(@RequestBody Usuario usuario) {
+
+        if(usuario.getCorreo().isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El correo no debe estar vacio");
+        }
 
         // Contraseña codificada
         Argon2 argon = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
         String hash = argon.hash(1, 1024, 1, usuario.getPassword().toCharArray());
         usuario.setPassword(hash);
-        return usuarioDao.addUsuario(usuario);
+        Usuario usuariotemp= usuarioDao.addUsuario(usuario);
+
+        return new ResponseEntity<>( usuariotemp ,HttpStatus.OK);
     }
 
     @RequestMapping(value = "usuario/edit/1", method = RequestMethod.POST)
